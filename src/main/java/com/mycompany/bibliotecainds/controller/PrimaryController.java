@@ -1,5 +1,6 @@
-package com.mycompany.bibliotecainds;
+package com.mycompany.bibliotecainds.controller;
 
+import com.mycompany.bibliotecainds.App;
 import java.io.IOException;
 import javafx.fxml.FXML;
 

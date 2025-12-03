@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.bibliotecainds;
+package com.mycompany.bibliotecainds.data;
 
 /**
  *
- * @author Utente
+ * @author Giuseppe
  */
-public class Utente {
+public class Archivio {
     
 }
