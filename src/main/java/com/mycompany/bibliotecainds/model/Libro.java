@@ -10,5 +10,5 @@ package com.mycompany.bibliotecainds.model;
  * @author Giuseppe
  */
 public class Libro {
-    
+    quack;
 }
