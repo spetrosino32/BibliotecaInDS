@@ -7,7 +7,6 @@ package com.mycompany.bibliotecainds.model;
 import java.time.LocalDate;
 /**
  *
- * @author Giuseppe
  */
 public class Prestito {
     private Libro libro;
@@ -17,6 +16,11 @@ public class Prestito {
         this.libro = libro;
         this.dataPrestito = dataPrestito;
     }
-
-    // getter e setter
+    
+    public Libro getLibro(){
+        return libro;
+    }
+    public LocalDate getDataPrestito(){
+        return dataPrestito;
+    }
 }
