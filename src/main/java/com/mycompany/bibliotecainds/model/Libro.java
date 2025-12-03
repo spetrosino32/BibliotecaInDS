@@ -10,5 +10,9 @@ package com.mycompany.bibliotecainds.model;
  * @author Giuseppe
  */
 public class Libro {
-    quack;
+    private String bigQuack;
+    
+    public Libro(String q){
+        bigQuack = q;
+    }
 }
