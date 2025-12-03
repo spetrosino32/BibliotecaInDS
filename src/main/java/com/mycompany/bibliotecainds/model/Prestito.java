@@ -11,10 +11,14 @@ import java.time.LocalDate;
 public class Prestito {
     private Libro libro;
     private LocalDate dataPrestito;
+    private LocalDate dataScadenza;
+    private Utente utente;
 
-    public Prestito(Libro libro, LocalDate dataPrestito) {
+    public Prestito(Libro libro, LocalDate dataPrestito, Utente utente) {
         this.libro = libro;
         this.dataPrestito = dataPrestito;
+        this.dataScadenza= dataPrestito.plusDays(30);
+        this.utente=utente;
     }
     
     public Libro getLibro(){
@@ -22,5 +26,9 @@ public class Prestito {
     }
     public LocalDate getDataPrestito(){
         return dataPrestito;
+    }
+    
+    public boolean isScaduto(){
+        return LocalDate.now().isAfter(dataScadenza);
     }
 }

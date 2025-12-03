@@ -37,4 +37,8 @@ public class Libro {
     
     public boolean isDisponibile(){ return copie > 0; }
     
+    public void decrementaCopie(){}
+    
+    public void incrementaCopie(){}
+    
 }

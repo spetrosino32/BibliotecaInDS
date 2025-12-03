@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package com.mycompany.bibliotecainds.model;
-//import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 /**
@@ -25,19 +24,32 @@ public class Utente {
         this.email = email;
         this.listaPrestiti = new ArrayList<>(listaPrestiti);
     }
+    
     public String getNome(){
         return nome;
     }
+    
     public String getCognome(){
         return cognome;
     }
+    
     public int getMatricola(){
         return matricola;
     }
+    
     public String getEmail(){
         return email;
     }
+    
     public List<Prestito> getListaPrestiti(){
         return listaPrestiti;
     }
+    
+    public boolean concediPrestito(){
+        return listaPrestiti.size()<3;
+    }
+    
+    public void aggiungiPrestito(Prestito p){}
+    
+    public void rimuoviPrestito(Prestito p){}
 }
