@@ -14,26 +14,18 @@ import java.util.List;
 
 public class Archivio implements Serializable {
     private static final long serialVersionUID = 1L;
-    
     private List<Libro> catalogoLibri;
     private List<Utente> registroUtenti;
-
     private List<Prestito> prestitiAttivi; 
-
     private static Archivio instance;
-
+    
     private Archivio() {
         catalogoLibri = new ArrayList<>();
         registroUtenti = new ArrayList<>();
         prestitiAttivi = new ArrayList<>();
     }
 
-    public static Archivio getInstanza() {
-        if (instance == null) {
-            instance = new Archivio();
-        }
-        return instance;
-    }
+    //public static Archivio getInstanza() {}
 
     public List<Libro> getCatalogoLibri() { return catalogoLibri; }
     public List<Utente> getRegistroUtenti() { return registroUtenti; }
@@ -41,11 +33,6 @@ public class Archivio implements Serializable {
 
     
     public static void salva(String filePath) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(getInstanza());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void carica(String filePath) {
