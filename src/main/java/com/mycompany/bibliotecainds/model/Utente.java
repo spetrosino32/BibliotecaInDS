@@ -7,12 +7,13 @@ package com.mycompany.bibliotecainds.model;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.io.Serializable;
 /**
  *
  * @author Giuseppe
  */
 
-public class Utente {
+public class Utente implements Serializable{
     private String nome;
     private String cognome;
     private String matricola;

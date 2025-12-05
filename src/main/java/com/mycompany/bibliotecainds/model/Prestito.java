@@ -6,11 +6,12 @@
 package com.mycompany.bibliotecainds.model;
 
 import java.time.LocalDate;
+import java.io.Serializable;
 /**
  *
  */
 
-public class Prestito {
+public class Prestito implements Serializable{
     private Libro libro;
     private LocalDate dataPrestito;
     private LocalDate dataScadenza;
