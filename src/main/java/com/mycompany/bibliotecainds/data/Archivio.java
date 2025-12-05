@@ -40,6 +40,7 @@ public class Archivio implements Serializable {
     public List<Utente> getRegistroUtenti() { return registroUtenti; }
     public List<Prestito> getPrestitiAttivi() { return prestitiAttivi; }
     
+
     public static void salva(String filePath) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
             oos.writeObject(getInstance());
