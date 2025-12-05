@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 package com.mycompany.bibliotecainds.model;
+
 import java.time.LocalDate;
 /**
  *
  */
+
 public class Prestito {
     private Libro libro;
     private LocalDate dataPrestito;
@@ -31,4 +33,9 @@ public class Prestito {
     public boolean isScaduto(){
         return LocalDate.now().isAfter(dataScadenza);
     }
+    
+    public Utente getUtente(){ return utente; }
+    
+    public LocalDate getDataScadenza(){return dataScadenza;}
+    
 }

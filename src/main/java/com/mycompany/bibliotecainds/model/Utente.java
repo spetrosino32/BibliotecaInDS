@@ -4,20 +4,22 @@
  * and open the template in the editor.
  */
 package com.mycompany.bibliotecainds.model;
+
 import java.util.List;
 import java.util.ArrayList;
 /**
  *
  * @author Giuseppe
  */
+
 public class Utente {
     private String nome;
     private String cognome;
-    private int matricola;
+    private String matricola;
     private String email;
     private List<Prestito> listaPrestiti;
     
-    public Utente (String nome, String cognome, int matricola, String email, List<Prestito> listaPrestiti){
+    public Utente (String nome, String cognome, String matricola, String email, List<Prestito> listaPrestiti){
         this.nome = nome;
         this.cognome = cognome;
         this.matricola = matricola;
@@ -33,7 +35,7 @@ public class Utente {
         return cognome;
     }
     
-    public int getMatricola(){
+    public String getMatricola(){
         return matricola;
     }
     
@@ -52,4 +54,5 @@ public class Utente {
     public void aggiungiPrestito(Prestito p){}
     
     public void rimuoviPrestito(Prestito p){}
+    
 }

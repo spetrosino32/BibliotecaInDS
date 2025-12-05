@@ -11,13 +11,13 @@ import java.util.ArrayList;
  *
  * @author Giuseppe
  */
+
 public class Libro {
     private String titolo;
     private List<String> autori;
     private int anno;
     private String isbn;
     private int copie;
-    
     
     public Libro(String titolo, List<String> autori, int anno, String isbn, int copie){
         this.titolo = titolo;
@@ -35,7 +35,7 @@ public class Libro {
     
     public String getIsbn(){return isbn;}
     
-    public boolean isDisponibile(){ return copie > 0; }
+    public int getCopieDisponibili(){ return copie; }
     
     public void decrementaCopie(){}
     
