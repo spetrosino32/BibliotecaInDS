@@ -129,7 +129,7 @@ public class BibliotecaController implements Initializable {
 
             catalogoService.aggiungiLibro(nuovoLibro);
 
-            // Aggiorna GUI
+            //Aggiorna GUI
             observableLibri.add(nuovoLibro);
             pulisciCampiLibro();
             showAlert("Successo", "Libro aggiunto al catalogo.");
