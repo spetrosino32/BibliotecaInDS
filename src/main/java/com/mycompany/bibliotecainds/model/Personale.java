@@ -22,8 +22,4 @@ public class Personale implements Serializable {
     public String getEmail(){ return email;}
     
     public String getPassword(){return password;}
-    
-    public void modificaCatalogo(){}
-    
-    public void gestisciUtenti(){}
 }

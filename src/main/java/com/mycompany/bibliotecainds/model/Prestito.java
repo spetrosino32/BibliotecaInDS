@@ -24,19 +24,15 @@ public class Prestito implements Serializable{
         this.utente=utente;
     }
     
-    public Libro getLibro(){
-        return libro;
-    }
-    public LocalDate getDataPrestito(){
-        return dataPrestito;
-    }
+    public Libro getLibro(){ return libro; }
     
-    public boolean isScaduto(){
-        return LocalDate.now().isAfter(dataScadenza);
-    }
+    public LocalDate getDataPrestito(){ return dataPrestito; }
     
     public Utente getUtente(){ return utente; }
     
     public LocalDate getDataScadenza(){return dataScadenza;}
     
+    public boolean isScaduto(){
+        return LocalDate.now().isAfter(dataScadenza);
+    } 
 }

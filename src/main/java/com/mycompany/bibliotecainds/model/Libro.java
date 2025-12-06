@@ -38,8 +38,8 @@ public class Libro implements Serializable{
     
     public int getCopieDisponibili(){ return copie; }
     
-    public void decrementaCopie(){}
+    public void decrementaCopie(){ copie-=1;}
     
-    public void incrementaCopie(){}
+    public void incrementaCopie(){ copie+=1; }
     
 }
