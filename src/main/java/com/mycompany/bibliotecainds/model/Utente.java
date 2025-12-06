@@ -55,5 +55,5 @@ public class Utente implements Serializable{
     public void aggiungiPrestito(Prestito p){ listaPrestiti.add(p); }
     
     public void rimuoviPrestito(Prestito p){ listaPrestiti.remove(p); }
-    
+
 }
