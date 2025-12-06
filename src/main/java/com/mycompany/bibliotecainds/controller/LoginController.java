@@ -28,10 +28,7 @@ public class LoginController {
         String email = txtEmail.getText();
         String pwd = txtPassword.getText();
 
-        // VALIDAZIONE SEMPLICE (Mock)
-        // In un caso reale, verificheresti contro l'Archivio o un DB
         if (!email.isEmpty() && !pwd.isEmpty()) {
-            // Login riuscito -> Vai alla Dashboard
             App.setRoot("primary");
         } else {
             lblErrore.setText("Inserisci email e password valide.");

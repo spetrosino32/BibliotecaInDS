@@ -10,6 +10,7 @@ import com.mycompany.bibliotecainds.data.Archivio;
 import com.mycompany.bibliotecainds.model.Libro;
 import com.mycompany.bibliotecainds.model.Prestito;
 import com.mycompany.bibliotecainds.model.Utente;
+import com.mycompany.bibliotecainds.service.*;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -31,7 +32,7 @@ import javafx.scene.control.*;
  */
 
 public class BibliotecaController implements Initializable {
-   
+
     @FXML private TableView<Libro> tabellaLibri;
     @FXML private TableColumn<Libro, String> colTitolo;
     @FXML private TableColumn<Libro, String> colAutore;
@@ -46,45 +47,58 @@ public class BibliotecaController implements Initializable {
     private ObservableList<Libro> observableLibri;
     private ObservableList<Utente> observableUtenti;
     private ObservableList<Prestito> observablePrestiti;
+    private CatalogoService catalogoService;
+    private UtenteService utenteService;
+    private PrestitoService prestitoService;
 
+    /**
+     * Metodo chiamato automaticamente all'avvio.
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // 1. Carica i dati dall'Archivio (Singleton)
-        observableLibri = FXCollections.observableArrayList(Archivio.getInstance().getCatalogoLibri());
-        observableUtenti = FXCollections.observableArrayList(Archivio.getInstance().getRegistroUtenti());
-        observablePrestiti = FXCollections.observableArrayList(Archivio.getInstance().getPrestitiAttivi());
+        
+        this.catalogoService = new CatalogoServiceImpl();
+        this.utenteService = new UtenteServiceImpl();
+        this.prestitoService = new PrestitoServiceImpl();
 
-        // 2. Collega i dati alle tabelle
+        caricaDati();
+
         tabellaLibri.setItems(observableLibri);
         tabellaUtenti.setItems(observableUtenti);
         tabellaPrestiti.setItems(observablePrestiti);
 
-        // 3. Inizializza le colonne (Mapping)
-        initColonne();
+        configuraColonne();
     }
 
-    private void initColonne() {
-        // Libri
+    private void caricaDati() {
+        observableLibri = FXCollections.observableArrayList(catalogoService.getCatalogo());
+        observableUtenti = FXCollections.observableArrayList(utenteService.getListaUtenti());
+        observablePrestiti = FXCollections.observableArrayList(Archivio.getInstance().getPrestitiAttivi());
+    }
+
+    private void configuraColonne() {
+        // --- LIBRI ---
         colTitolo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTitolo()));
-        colAutore.setCellValueFactory(d -> new SimpleStringProperty(String.join(", ", d.getValue().getAutori())));
+        colAutore.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAutori().toString())); // O String.join se preferisci
         colCopie.setCellValueFactory(d -> new SimpleIntegerProperty(d.getValue().getCopieDisponibili()).asObject());
 
-        // Utenti
+        // --- UTENTI ---
         colNome.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNome()));
         colCognome.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCognome()));
         colMatricola.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMatricola()));
 
-        // Prestiti (naviga gli oggetti)
+        // --- PRESTITI ---
         colPrestitoLibro.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getLibro().getTitolo()));
         colPrestitoUtente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUtente().getCognome()));
         colPrestitoScadenza.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDataScadenza().toString()));
 
-        // Evidenzia ritardi in rosso
+        // Evidenziazione Ritardi
         tabellaPrestiti.setRowFactory(tv -> new TableRow<Prestito>() {
-            @Override protected void updateItem(Prestito item, boolean empty) {
+            @Override
+            protected void updateItem(Prestito item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item != null && item.isScaduto()) {
-                    setStyle("-fx-background-color: #ffcccc;"); // Rosso
+                    setStyle("-fx-background-color: #ffcccc;"); // Rosso chiaro
                 } else {
                     setStyle("");
                 }
@@ -92,87 +106,132 @@ public class BibliotecaController implements Initializable {
         });
     }
 
-
+    // --- GESTIONE LIBRI ---
     @FXML
     private void handleAggiungiLibro(ActionEvent event) {
         try {
             String titolo = txtTitolo.getText();
-            int copie = Integer.parseInt(txtCopie.getText());
-            int anno = 0; 
-            try { anno = Integer.parseInt(txtAnno.getText()); } catch(Exception e) {} // Anno opzionale
+            String isbn = txtIsbn.getText();
             
-            if (titolo.isEmpty()) { showAlert("Errore", "Titolo obbligatorio."); return; }
+            int copie = Integer.parseInt(txtCopie.getText());
+            int anno = 0;
+            if (!txtAnno.getText().isEmpty()) {
+                anno = Integer.parseInt(txtAnno.getText());
+            }
+
+            if (titolo.isEmpty() || isbn.isEmpty()) {
+                showAlert("Errore", "Titolo e ISBN sono obbligatori.");
+                return;
+            }
 
             ArrayList<String> autori = new ArrayList<>(Arrays.asList(txtAutore.getText().split(",")));
-            
-            Libro nuovo = new Libro(titolo, autori, anno, txtIsbn.getText(), copie);
-            
-            observableLibri.add(nuovo);
-            Archivio.getInstance().getCatalogoLibri().add(nuovo);
-            
-            txtTitolo.clear(); txtAutore.clear(); txtIsbn.clear(); txtCopie.clear(); txtAnno.clear();
+            Libro nuovoLibro = new Libro(titolo, autori, anno, isbn, copie);
+
+            catalogoService.aggiungiLibro(nuovoLibro);
+
+            // Aggiorna GUI
+            observableLibri.add(nuovoLibro);
+            pulisciCampiLibro();
+            showAlert("Successo", "Libro aggiunto al catalogo.");
+
         } catch (NumberFormatException e) {
-            showAlert("Errore", "Le copie devono essere un numero.");
+            showAlert("Errore Formato", "Copie e Anno devono essere numeri interi.");
+        } catch (Exception e) {
+            showAlert("Errore Business", e.getMessage());
         }
     }
 
+    private void pulisciCampiLibro() {
+        txtTitolo.clear();
+        txtAutore.clear();
+        txtAnno.clear();
+        txtIsbn.clear();
+        txtCopie.clear();
+    }
+
+    // --- GESTIONE UTENTI ---
     @FXML
     private void handleAggiungiUtente(ActionEvent event) {
-        if (txtNomeUtente.getText().isEmpty() || txtCognomeUtente.getText().isEmpty()) {
-            showAlert("Errore", "Nome e Cognome obbligatori.");
-            return;
+        try {
+            String nome = txtNomeUtente.getText();
+            String cognome = txtCognomeUtente.getText();
+            String email = txtEmail.getText();
+            String matricola = txtMatricola.getText();
+
+            if (nome.isEmpty() || cognome.isEmpty() || matricola.isEmpty()) {
+                showAlert("Errore", "Nome, Cognome e Matricola obbligatori.");
+                return;
+            }
+
+            Utente nuovoUtente = new Utente(nome, cognome, matricola, email, new ArrayList<>());
+
+            utenteService.registraUtente(nuovoUtente);
+
+            // Aggiorna GUI
+            observableUtenti.add(nuovoUtente);
+            pulisciCampiUtente();
+            showAlert("Successo", "Utente registrato.");
+
+        } catch (Exception e) {
+            showAlert("Errore Business", e.getMessage());
         }
-        Utente nuovo = new Utente(txtNomeUtente.getText(), txtCognomeUtente.getText(), 
-                                  txtMatricola.getText(), txtEmail.getText(), new ArrayList<>());
-        observableUtenti.add(nuovo);
-        Archivio.getInstance().getRegistroUtenti().add(nuovo);
-        txtNomeUtente.clear(); txtCognomeUtente.clear(); txtMatricola.clear(); txtEmail.clear();
     }
 
+    private void pulisciCampiUtente() {
+        txtNomeUtente.clear();
+        txtCognomeUtente.clear();
+        txtMatricola.clear();
+        txtEmail.clear();
+    }
+
+    // --- GESTIONE PRESTITI ---
     @FXML
     private void handleNuovoPrestito(ActionEvent event) {
-        Utente u = tabellaUtenti.getSelectionModel().getSelectedItem();
-        Libro l = tabellaLibri.getSelectionModel().getSelectedItem();
+        Utente utenteSelezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
+        Libro libroSelezionato = tabellaLibri.getSelectionModel().getSelectedItem();
 
-        if (u == null || l == null) {
-            showAlert("Selezione Mancante", "Seleziona un Utente e un Libro dalle rispettive tabelle prima di procedere.");
+        if (utenteSelezionato == null || libroSelezionato == null) {
+            showAlert("Attenzione", "Seleziona un utente e un libro dalle tabelle.");
             return;
         }
 
-        if (l.getCopieDisponibili()>0 && u.concediPrestito()) {
-            Prestito p = new Prestito(l, LocalDate.now(), u); // Data calcolata nel costruttore
-            
-            // Aggiorna logica
-            l.decrementaCopie();
-            u.aggiungiPrestito(p);
-            
-            // Aggiorna View e Archivio
-            observablePrestiti.add(p);
-            Archivio.getInstance().getPrestitiAttivi().add(p);
-            
-            tabellaLibri.refresh(); // Per vedere il calo delle copie
-            showAlert("Successo","Prestito registrato per " + u.getCognome());
-        } else {
-            showAlert("Impossibile procedere", "Libro non disponibile o Utente ha troppi prestiti.");
+        try {
+            boolean esito = prestitoService.registraPrestito(utenteSelezionato, libroSelezionato);
+
+            if (esito) {
+                // Aggiorna la tabella prestiti
+                observablePrestiti.setAll(Archivio.getInstance().getPrestitiAttivi());
+                
+                // Aggiorna la tabella libri (per vedere il numero copie scendere)
+                tabellaLibri.refresh(); 
+                
+                showAlert("Successo", "Prestito registrato per " + utenteSelezionato.getCognome());
+            }
+
+        } catch (Exception e) {
+            showAlert("Operazione Fallita", e.getMessage());
         }
     }
 
     @FXML
     private void handleRestituzione(ActionEvent event) {
-        Prestito p = tabellaPrestiti.getSelectionModel().getSelectedItem();
-        if (p == null) {
-            showAlert("Selezione", "Seleziona un prestito da restituire.");
+        Prestito prestitoSelezionato = tabellaPrestiti.getSelectionModel().getSelectedItem();
+
+        if (prestitoSelezionato == null) {
+            showAlert("Attenzione", "Seleziona un prestito da restituire.");
             return;
         }
-        
-        p.getLibro().incrementaCopie();
-        p.getUtente().rimuoviPrestito(p);
-        
-        observablePrestiti.remove(p);
-        Archivio.getInstance().getPrestitiAttivi().remove(p);
+
+        prestitoService.restituisciPrestito(prestitoSelezionato);
+
+        // Aggiorna GUI
+        observablePrestiti.remove(prestitoSelezionato);
         tabellaLibri.refresh();
+        
+        showAlert("Info", "Libro restituito con successo.");
     }
 
+    // --- NAVIGAZIONE E UTILITY ---
     @FXML
     private void handleInfo() throws IOException {
         App.setRoot("secondary");
