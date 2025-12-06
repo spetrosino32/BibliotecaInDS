@@ -52,8 +52,8 @@ public class Utente implements Serializable{
         return listaPrestiti.size()<3;
     }
     
-    public void aggiungiPrestito(Prestito p){}
+    public void aggiungiPrestito(Prestito p){ listaPrestiti.add(p); }
     
-    public void rimuoviPrestito(Prestito p){}
+    public void rimuoviPrestito(Prestito p){ listaPrestiti.remove(p); }
     
 }
