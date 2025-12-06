@@ -1,0 +1,16 @@
+com\mycompany\bibliotecainds\service\CatalogoServiceImpl.class
+com\mycompany\bibliotecainds\model\Personale.class
+com\mycompany\bibliotecainds\service\UtenteService.class
+com\mycompany\bibliotecainds\model\Utente.class
+com\mycompany\bibliotecainds\service\PrestitoServiceImpl.class
+com\mycompany\bibliotecainds\model\Libro.class
+com\mycompany\bibliotecainds\controller\BibliotecaController.class
+com\mycompany\bibliotecainds\controller\LoginController.class
+com\mycompany\bibliotecainds\service\CatalogoService.class
+com\mycompany\bibliotecainds\data\Archivio.class
+com\mycompany\bibliotecainds\service\PrestitoService.class
+com\mycompany\bibliotecainds\model\Prestito.class
+com\mycompany\bibliotecainds\controller\BibliotecaController$1.class
+com\mycompany\bibliotecainds\controller\SecondaryController.class
+com\mycompany\bibliotecainds\App.class
+com\mycompany\bibliotecainds\service\UtenteServiceImpl.class
