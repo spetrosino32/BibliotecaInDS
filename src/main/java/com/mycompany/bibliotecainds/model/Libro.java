@@ -4,7 +4,7 @@
  * La classe in questione contiene il titolo, gli autori, 
  * l'anno di pubblicazione, il codice isbn e le copie disponibili.
  * 
- * @author Giuseppe Sara Vincenzo Elena
+ * @author Giuseppe, Sara, Vincenzo, Elena
  *
  * @date 5 dicembre 2025
  */
