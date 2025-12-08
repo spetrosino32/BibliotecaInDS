@@ -1,7 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @file PrestitoService,java
+ * @brief Interfaccia per la gestione dei prestiti dei libri 
+ * 
+ * Questa interfaccia definisce le operazion 
  */
 package com.mycompany.bibliotecainds.service;
 
