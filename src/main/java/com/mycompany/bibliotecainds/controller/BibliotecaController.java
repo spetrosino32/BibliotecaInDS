@@ -1,7 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @file BibliotecaController.java
+ * @brief Controller principale dell'interfaccia della biblioteca
+ * 
+ * Questa classe gestisce utte le interazioni dell'utente con la GUI, 
+ * incluse le operazioni su:
+ * - Catalogo dei libri
+ * - Registrazioni degli utenti
+ * - Prestiti e restituzioni
+ * 
+ * Utilizza i servizi:
+ * - CatalogoService
+ * - UtenteService
+ * - PrestitoService
+ * 
+ * @author Giuseppe, Sara, Vincenzo, Elena
+ * @date 7 dicembre 2025
  */
 package com.mycompany.bibliotecainds.controller;
 
@@ -27,11 +40,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 /**
- *
- * @author Giuseppe
+ * @class BibliotecaController
+ * @brief Controller JavaFX che coordina le interazioni fra la GUI e logica applicativa
+ * 
+ * Implementa l'interfacia Initializable e viene richiamato automaticamente 
+ * al caricamento della scena principale. Gestisce:
+ * - Visualizzazione dei dati
+ * - Inserimento dei libri 
+ * - Inserimento degli utenti
+ * - Gestione dei prestiti
  */
 
 public class BibliotecaController implements Initializable {
+    
 
     @FXML private TableView<Libro> tabellaLibri;
     @FXML private TableColumn<Libro, String> colTitolo;
@@ -52,8 +73,14 @@ public class BibliotecaController implements Initializable {
     private PrestitoService prestitoService;
 
     /**
-     * Metodo chiamato automaticamente all'avvio.
+     * @brief Metodo chiamato automaticamente all'avvio.
+     * 
+     * Inizializza i servizi, carica i dati da visualizzare nella tabella 
+     * e configura i servizi
+     * @param url Non utilizzato
+     * @param rb Non utilizzato
      */
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
@@ -69,12 +96,25 @@ public class BibliotecaController implements Initializable {
 
         configuraColonne();
     }
+    
+    /**
+     * @brief Carica da Archivio i dati degli utenti, libri e prestiti
+     * 
+     * Popola le liste presenti nella TableView
+     */
 
     private void caricaDati() {
         observableLibri = FXCollections.observableArrayList(catalogoService.getCatalogo());
         observableUtenti = FXCollections.observableArrayList(utenteService.getListaUtenti());
         observablePrestiti = FXCollections.observableArrayList(Archivio.getInstance().getPrestitiAttivi());
     }
+    
+    /**
+     * @brief Configura le colonne della TableView
+     * 
+     * Imposta i valueFactory per mostrare correttamente i dati
+     * ed evidenzia i prestiti scaduti
+     */
 
     private void configuraColonne() {
         // --- LIBRI ---
@@ -107,6 +147,15 @@ public class BibliotecaController implements Initializable {
     }
 
     // --- GESTIONE LIBRI ---
+    
+    /**
+     * @brief Bottone "Aggiungi libro"
+     * 
+     * Legge i dati inseriti nella GUI, crea un nuovo oggetto Libro e lo aggiunge
+     * al catalogo tramite CatalogoService
+     * @param event Evento generato dal click del bottone
+     */
+    
     @FXML
     private void handleAggiungiLibro(ActionEvent event) {
         try {
@@ -140,6 +189,10 @@ public class BibliotecaController implements Initializable {
             showAlert("Errore Business", e.getMessage());
         }
     }
+    
+    /**
+     * @brief Ripulisce i campi di input relativi ai libri dopo un inserimento
+     */
 
     private void pulisciCampiLibro() {
         txtTitolo.clear();
@@ -150,6 +203,14 @@ public class BibliotecaController implements Initializable {
     }
 
     // --- GESTIONE UTENTI ---
+    
+    /**
+     * Bottone "Aggiungi utente"
+     * 
+     * Crea un nuovo utente e lo registra tramite UtenteService
+     * @param event Evento generato dal click 
+     */
+    
     @FXML
     private void handleAggiungiUtente(ActionEvent event) {
         try {
@@ -176,6 +237,10 @@ public class BibliotecaController implements Initializable {
             showAlert("Errore Business", e.getMessage());
         }
     }
+    
+    /**
+     * @brief Ripulisce i campi relativi all'inserimento di un utente
+     */
 
     private void pulisciCampiUtente() {
         txtNomeUtente.clear();
@@ -185,6 +250,15 @@ public class BibliotecaController implements Initializable {
     }
 
     // --- GESTIONE PRESTITI ---
+    
+    /**
+     * Bottone "Nuovo prestito"
+     * 
+     * Verifica che siano selezionati un libro ed un utente, poi registra 
+     * un nuovo prestito tramite PrestitoService
+     * @param event Evento generato del click
+     */
+    
     @FXML
     private void handleNuovoPrestito(ActionEvent event) {
         Utente utenteSelezionato = tabellaUtenti.getSelectionModel().getSelectedItem();
@@ -212,6 +286,14 @@ public class BibliotecaController implements Initializable {
             showAlert("Operazione Fallita", e.getMessage());
         }
     }
+    
+    /**
+     * @brief Bottone "Restituzione"
+     * 
+     * Restituisce il libro associato al prestito selezionato
+     * Aggiorna la GUI e i dati persistenti
+     * @param event Evento generato dal click
+     */
 
     @FXML
     private void handleRestituzione(ActionEvent event) {
@@ -232,15 +314,36 @@ public class BibliotecaController implements Initializable {
     }
 
     // --- NAVIGAZIONE E UTILITY ---
+    
+    /**
+     * @brief Mostra la schermata informativa secondaria
+     * 
+     * @throws IOException In caso di errore nel caricamento della nuova scena
+     */
+    
     @FXML
     private void handleInfo() throws IOException {
         App.setRoot("secondary");
     }
+    
+    /**
+     * @brief Effettua il logout e torna alla schermata di login
+     * 
+     * 
+     * @throws IOException Se la schermata non può essere caricata
+     */
 
     @FXML
     private void handleLogout() throws IOException {
         App.setRoot("login");
     }
+    
+    /**
+     * @brief Mostra un popup informativo
+     * 
+     * @param title Titolo della finestra
+     * @param content Messaggio da visualizzare
+     */
 
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
