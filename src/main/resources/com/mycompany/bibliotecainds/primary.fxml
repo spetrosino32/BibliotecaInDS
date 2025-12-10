@@ -40,6 +40,8 @@
                                 <columns>
                                   <TableColumn fx:id="colTitolo" prefWidth="250.0" text="Titolo" />
                                   <TableColumn fx:id="colAutore" prefWidth="200.0" text="Autori" />
+                                  <TableColumn fx:id="colIsbn" prefWidth="100.0" text="ISBN" />
+                                  <TableColumn fx:id="colAnno" prefWidth="75.0" text="Anno" />
                                     <TableColumn fx:id="colCopie" prefWidth="75.0" text="Copie" />
                                 </columns>
                               </TableView>
@@ -71,7 +73,9 @@
                                 <columns>
                                   <TableColumn fx:id="colNome" prefWidth="150.0" text="Nome" />
                                   <TableColumn fx:id="colCognome" prefWidth="150.0" text="Cognome" />
-                                    <TableColumn fx:id="colMatricola" prefWidth="120.0" text="Matricola" />
+                                  <TableColumn fx:id="colMatricola" prefWidth="120.0" text="Matricola" />
+                                  <TableColumn fx:id="colEmail" prefWidth="150.0" text="Email" />
+                                  <TableColumn fx:id="colLibriInPrestito" prefWidth="200.0" text="Libri in Prestito" />
                                 </columns>
                               </TableView>
                               <VBox prefWidth="250.0" spacing="10.0">

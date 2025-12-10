@@ -66,10 +66,13 @@ public class LoginController {
         String email = txtEmail.getText();
         String pwd = txtPassword.getText();
 
-        if (!email.isEmpty() && !pwd.isEmpty()) {
-            App.setRoot("primary");
-        } else {
-            lblErrore.setText("Inserisci email e password valide.");
+    
+        if ("admin".equals(email) && "admin".equals(pwd)) {
+            App.setRoot("primary"); // Va alla dashboard se corretto
+        }
+        else {
+            txtPassword.clear();
+            lblErrore.setText("Credenziali errate, riprova.");
         }
     }
 }

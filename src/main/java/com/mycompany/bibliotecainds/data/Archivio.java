@@ -89,12 +89,12 @@ public class Archivio implements Serializable {
      */
     
     public static void salva(String filePath) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(getInstance());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+        oos.writeObject(getInstance());
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
     
     /**
      * @brief Carica l'intero archivio da un file se esiste

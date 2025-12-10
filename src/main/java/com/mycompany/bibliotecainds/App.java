@@ -34,9 +34,18 @@ public class App extends Application {
  */
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+
+        com.mycompany.bibliotecainds.data.Archivio.carica("archivio.dat");
+
+        scene = new Scene(loadFXML("login"), 640, 480); 
         stage.setScene(scene);
         stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        com.mycompany.bibliotecainds.data.Archivio.salva("archivio.dat");
+        super.stop();
     }
 /**
  * @brief Cambia la schermata attuale con un'altra.

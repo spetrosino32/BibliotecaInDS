@@ -64,7 +64,11 @@ public class BibliotecaController implements Initializable {
     @FXML private TextField txtNomeUtente, txtCognomeUtente, txtMatricola, txtEmail;
     @FXML private TableView<Prestito> tabellaPrestiti;
     @FXML private TableColumn<Prestito, String> colPrestitoLibro, colPrestitoUtente, colPrestitoScadenza;
-
+    @FXML private TableColumn<Libro, String> colIsbn;
+    @FXML private TableColumn<Libro, Integer> colAnno;
+    @FXML private TableColumn<Utente, String> colEmail;
+    @FXML private TableColumn<Utente, String> colLibriInPrestito;
+    
     private ObservableList<Libro> observableLibri;
     private ObservableList<Utente> observableUtenti;
     private ObservableList<Prestito> observablePrestiti;
@@ -121,12 +125,22 @@ public class BibliotecaController implements Initializable {
         colTitolo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTitolo()));
         colAutore.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAutori().toString())); // O String.join se preferisci
         colCopie.setCellValueFactory(d -> new SimpleIntegerProperty(d.getValue().getCopieDisponibili()).asObject());
-
+        colIsbn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getIsbn()));
+        colAnno.setCellValueFactory(d -> new SimpleIntegerProperty(d.getValue().getAnno()).asObject());
+        
         // --- UTENTI ---
         colNome.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNome()));
         colCognome.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCognome()));
         colMatricola.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMatricola()));
-
+        colEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
+        colLibriInPrestito.setCellValueFactory(d -> {
+        String elencoLibri = d.getValue().getListaPrestiti().stream()
+                .map(p -> p.getLibro().getTitolo())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("Nessun prestito");
+        return new SimpleStringProperty(elencoLibri);
+        });
+        
         // --- PRESTITI ---
         colPrestitoLibro.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getLibro().getTitolo()));
         colPrestitoUtente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUtente().getCognome()));
@@ -161,6 +175,11 @@ public class BibliotecaController implements Initializable {
         try {
             String titolo = txtTitolo.getText();
             String isbn = txtIsbn.getText();
+            
+            if (!isbn.matches("^[A-Za-z]{2}\\d{2}[A-Za-z]{2}$")) {
+                showAlert("Errore Formato", "L'ISBN deve essere nel formato: 2 lettere, 2 numeri, 2 lettere (es. AB12CD).");
+                return;
+            }
             
             int copie = Integer.parseInt(txtCopie.getText());
             int anno = 0;
