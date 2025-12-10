@@ -54,6 +54,8 @@
                                     <TextField fx:id="txtIsbn" promptText="ISBN" />
                                     <TextField fx:id="txtCopie" promptText="Copie Disponibili" />
                                     <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAggiungiLibro" text="Aggiungi Libro" />
+                                    <Button fx:id="btnModificaLibro" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleModificaLibro" text="Modifica Selezionato" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                    <Button fx:id="btnRimuoviLibro" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRimuoviLibro" text="Elimina Libro" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
                                  </children>
                               </VBox>
                            </children>
@@ -86,6 +88,8 @@
                                     <TextField fx:id="txtMatricola" promptText="Matricola" />
                                     <TextField fx:id="txtEmail" promptText="Email Istituzionale" />
                                     <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAggiungiUtente" text="Registra Utente" />
+                                    <Button fx:id="btnModificaUtente" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleModificaUtente" text="Modifica Utente" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                    <Button fx:id="btnRimuoviUtente" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRimuoviUtente" text="Elimina Utente" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
                                  </children>
                               </VBox>
                            </children>

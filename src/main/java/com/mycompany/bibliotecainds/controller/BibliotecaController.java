@@ -39,6 +39,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 /**
  * @class BibliotecaController
  * @brief Controller JavaFX che coordina le interazioni fra la GUI e logica applicativa
@@ -68,6 +69,10 @@ public class BibliotecaController implements Initializable {
     @FXML private TableColumn<Libro, Integer> colAnno;
     @FXML private TableColumn<Utente, String> colEmail;
     @FXML private TableColumn<Utente, String> colLibriInPrestito;
+    @FXML private Button btnModificaLibro;
+    @FXML private Button btnModificaUtente;
+    @FXML private Button btnRimuoviLibro;
+    @FXML private Button btnRimuoviUtente;
     
     private ObservableList<Libro> observableLibri;
     private ObservableList<Utente> observableUtenti;
@@ -99,6 +104,11 @@ public class BibliotecaController implements Initializable {
         tabellaPrestiti.setItems(observablePrestiti);
 
         configuraColonne();
+        
+        btnModificaLibro.disableProperty().bind(tabellaLibri.getSelectionModel().selectedItemProperty().isNull());
+        btnModificaUtente.disableProperty().bind(tabellaUtenti.getSelectionModel().selectedItemProperty().isNull());
+        btnRimuoviLibro.disableProperty().bind(tabellaLibri.getSelectionModel().selectedItemProperty().isNull());
+        btnRimuoviUtente.disableProperty().bind(tabellaUtenti.getSelectionModel().selectedItemProperty().isNull());
     }
     
     /**
@@ -370,5 +380,174 @@ public class BibliotecaController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    
+    // --- GESTIONE MODIFICA LIBRO ---
+    @FXML
+    private void handleModificaLibro(ActionEvent event) {
+        Libro libro = tabellaLibri.getSelectionModel().getSelectedItem();
+        if (libro == null) return;
+
+        // Creiamo una finestra di dialogo custom
+        Dialog<Libro> dialog = new Dialog<>();
+        dialog.setTitle("Modifica Libro");
+        dialog.setHeaderText("Modifica i dati del libro: " + libro.getTitolo());
+
+        // Aggiungiamo i tasti OK e ANNULLA
+        ButtonType loginButtonType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        // Creiamo i campi pre-compilati con i dati attuali
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        
+        TextField editTitolo = new TextField(libro.getTitolo());
+        TextField editAutori = new TextField(String.join(",", libro.getAutori())); // Uniamo la lista in stringa
+        TextField editIsbn = new TextField(libro.getIsbn());
+        TextField editAnno = new TextField(String.valueOf(libro.getAnno()));
+        TextField editCopie = new TextField(String.valueOf(libro.getCopieDisponibili()));
+
+        grid.add(new Label("Titolo:"), 0, 0); grid.add(editTitolo, 1, 0);
+        grid.add(new Label("Autori:"), 0, 1); grid.add(editAutori, 1, 1);
+        grid.add(new Label("ISBN:"), 0, 2);   grid.add(editIsbn, 1, 2);
+        grid.add(new Label("Anno:"), 0, 3);   grid.add(editAnno, 1, 3);
+        grid.add(new Label("Copie:"), 0, 4);  grid.add(editCopie, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convertiamo il risultato quando si preme Salva
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                try {
+                    // Aggiorniamo l'oggetto LIBRO originale
+                    libro.setTitolo(editTitolo.getText());
+                    libro.setIsbn(editIsbn.getText());
+                    libro.setAnno(Integer.parseInt(editAnno.getText()));
+                    libro.setCopie(Integer.parseInt(editCopie.getText()));
+                    
+                    // Ricostruiamo la lista autori
+                    ArrayList<String> nuoviAutori = new ArrayList<>(Arrays.asList(editAutori.getText().split(",")));
+                    libro.setAutori(nuoviAutori);
+                    
+                    return libro;
+                } catch (Exception e) {
+                    showAlert("Errore", "Dati non validi: " + e.getMessage());
+                }
+            }
+            return null;
+        });
+
+        // Mostriamo la finestra e aspettiamo
+        dialog.showAndWait().ifPresent(l -> {
+            tabellaLibri.refresh(); // Aggiorna la grafica della tabella
+            showAlert("Successo", "Libro modificato correttamente.");
+        });
+    }
+
+    // --- GESTIONE MODIFICA UTENTE ---
+    @FXML
+    private void handleModificaUtente(ActionEvent event) {
+        Utente utente = tabellaUtenti.getSelectionModel().getSelectedItem();
+        if (utente == null) return;
+
+        Dialog<Utente> dialog = new Dialog<>();
+        dialog.setTitle("Modifica Utente");
+        dialog.setHeaderText("Modifica i dati di: " + utente.getCognome());
+
+        ButtonType saveBtn = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+
+        TextField editNome = new TextField(utente.getNome());
+        TextField editCognome = new TextField(utente.getCognome());
+        TextField editMatricola = new TextField(utente.getMatricola());
+        TextField editEmail = new TextField(utente.getEmail());
+
+        grid.add(new Label("Nome:"), 0, 0);      grid.add(editNome, 1, 0);
+        grid.add(new Label("Cognome:"), 0, 1);   grid.add(editCognome, 1, 1);
+        grid.add(new Label("Matricola:"), 0, 2); grid.add(editMatricola, 1, 2);
+        grid.add(new Label("Email:"), 0, 3);     grid.add(editEmail, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(btn -> {
+            if (btn == saveBtn) {
+                // Aggiorniamo l'oggetto UTENTE originale
+                utente.setNome(editNome.getText());
+                utente.setCognome(editCognome.getText());
+                utente.setMatricola(editMatricola.getText());
+                utente.setEmail(editEmail.getText());
+                return utente;
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(u -> {
+            tabellaUtenti.refresh();
+            showAlert("Successo", "Utente modificato correttamente.");
+        });
+    }
+    
+    // --- GESTIONE RIMOZIONE LIBRO ---
+    @FXML
+    private void handleRimuoviLibro(ActionEvent event) {
+        Libro libro = tabellaLibri.getSelectionModel().getSelectedItem();
+        if (libro == null) return;
+
+        // Chiediamo conferma prima di cancellare
+        if (!chiediConferma("Elimina Libro", "Sei sicuro di voler eliminare '" + libro.getTitolo() + "'?")) {
+            return;
+        }
+
+        try {
+            // Chiamiamo il service (rimuove dall'archivio)
+            catalogoService.rimuoviLibro(libro);
+            
+            // Rimuoviamo dalla tabella grafica
+            observableLibri.remove(libro);
+            
+            showAlert("Successo", "Libro eliminato dal catalogo.");
+        } catch (Exception e) {
+            showAlert("Impossibile Eliminare", e.getMessage());
+        }
+    }
+
+    // --- GESTIONE RIMOZIONE UTENTE ---
+    @FXML
+    private void handleRimuoviUtente(ActionEvent event) {
+        Utente utente = tabellaUtenti.getSelectionModel().getSelectedItem();
+        if (utente == null) return;
+
+        // Chiediamo conferma
+        if (!chiediConferma("Elimina Utente", "Sei sicuro di voler eliminare " + utente.getCognome() + "?")) {
+            return;
+        }
+
+        try {
+            // Il Service lancerà un'eccezione se l'utente ha prestiti attivi!
+            utenteService.rimuoviUtente(utente);
+            
+            // Se il service non dà errore, rimuoviamo dalla grafica
+            observableUtenti.remove(utente);
+            
+            showAlert("Successo", "Utente eliminato correttamente.");
+        } catch (Exception e) {
+            // Qui mostriamo l'errore del service (es. "Ha ancora libri in prestito")
+            showAlert("Errore Rimozione", e.getMessage());
+        }
+    }
+
+    // Metodo di utilità per la finestra di conferma (Sì/No)
+    private boolean chiediConferma(String title, String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(messaggio);
+        
+        // Restituisce true se l'utente clicca OK
+        return alert.showAndWait().filter(response -> response == ButtonType.OK).isPresent();
     }
 }

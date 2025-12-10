@@ -196,7 +196,10 @@ public class Utente implements Serializable{
 
     }
 
-    
+    public void setNome(String nome) { this.nome = nome; }
+    public void setCognome(String cognome) { this.cognome = cognome; }
+    public void setMatricola(String matricola) { this.matricola = matricola; }
+    public void setEmail(String email) { this.email = email; }
 
     /**
 

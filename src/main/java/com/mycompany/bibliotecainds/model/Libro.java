@@ -90,7 +90,7 @@ public class Libro implements Serializable{
      * viene utilizzato quando un libro viene preso in prestito
      */
     
-    public void decrementaCopie(){}
+    public void decrementaCopie(){copie-=1;}
     
     /**
      * @brief incrementa il numero di copie disponibili
@@ -98,6 +98,12 @@ public class Libro implements Serializable{
      * viene utilizzato quando un libro viene restituito o aggiunto al catalogo
      */
     
-    public void incrementaCopie(){}
+    public void incrementaCopie(){copie+=1;}
+    
+    public void setTitolo(String titolo) { this.titolo = titolo; }
+    public void setAutori(List<String> autori) { this.autori = autori; }
+    public void setAnno(int anno) { this.anno = anno; }
+    public void setIsbn(String isbn) { this.isbn = isbn; }
+    public void setCopie(int copie) { this.copie = copie; }
     
 }
