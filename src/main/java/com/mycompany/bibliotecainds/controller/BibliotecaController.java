@@ -30,6 +30,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.List;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.converter.NumberStringConverter;
@@ -73,6 +74,8 @@ public class BibliotecaController implements Initializable {
     @FXML private Button btnModificaUtente;
     @FXML private Button btnRimuoviLibro;
     @FXML private Button btnRimuoviUtente;
+    @FXML private TextField txtCercaLibro;
+    @FXML private TextField txtCercaUtente;
     
     private ObservableList<Libro> observableLibri;
     private ObservableList<Utente> observableUtenti;
@@ -104,6 +107,17 @@ public class BibliotecaController implements Initializable {
         tabellaPrestiti.setItems(observablePrestiti);
 
         configuraColonne();
+        
+        txtCercaLibro.textProperty().addListener((observable, oldValue, newValue) -> {
+            List<Libro> risultati = catalogoService.cercaLibri(newValue);
+            observableLibri.setAll(risultati);
+        });
+        
+        txtCercaUtente.textProperty().addListener((observable, oldValue, newValue) -> {
+            List<Utente> risultati = utenteService.cercaUtente(newValue);
+            observableUtenti.setAll(risultati);
+        });
+        
         
         btnModificaLibro.disableProperty().bind(tabellaLibri.getSelectionModel().selectedItemProperty().isNull());
         btnModificaUtente.disableProperty().bind(tabellaUtenti.getSelectionModel().selectedItemProperty().isNull());

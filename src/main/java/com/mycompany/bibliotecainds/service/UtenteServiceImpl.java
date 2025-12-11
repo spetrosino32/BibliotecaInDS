@@ -98,10 +98,18 @@ public class UtenteServiceImpl implements UtenteService{
     /**
      * @brief Restituisce l'elenco completo degli utenti.
      * 
-     * @return Lista attuale degli utenti registrati.
+     * @return Lista attuale degli utenti registrati ordinata per cognome e nome.
      */
     @Override
     public List<Utente> getListaUtenti() {
-        return Archivio.getInstance().getRegistroUtenti();
+        List<Utente> utenti = Archivio.getInstance().getRegistroUtenti();
+        utenti.sort((u1, u2) -> {
+            int res = u1.getCognome().compareToIgnoreCase(u2.getCognome());
+            if (res == 0) {
+                return u1.getNome().compareToIgnoreCase(u2.getNome());
+            }
+            return res;
+        });
+        return utenti;
     }
 }

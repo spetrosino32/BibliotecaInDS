@@ -94,10 +94,12 @@ public class CatalogoServiceImpl implements CatalogoService {
     /**
      * @brief Restituisce l'intero catalogo di libri.
      * 
-     * @return Lista che contiene tutti i libri in archivio.
+     * @return Lista che contiene tutti i libri in archivio in ordine lessicografico.
      */
     @Override
-    public List<Libro> getCatalogo() {
-        return Archivio.getInstance().getCatalogoLibri();
+    public List<Libro> getCatalogo(){
+        List<Libro> libri = Archivio.getInstance().getCatalogoLibri();
+        libri.sort((l1, l2) -> l1.getTitolo().compareToIgnoreCase(l2.getTitolo()));
+        return libri;
     }
 }
