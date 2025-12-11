@@ -321,6 +321,7 @@ public class BibliotecaController implements Initializable {
      * 
      * Restituisce il libro associato al prestito selezionato
      * Aggiorna la GUI e i dati persistenti
+     * 
      * @param event Evento generato dal click
      */
 
@@ -383,6 +384,16 @@ public class BibliotecaController implements Initializable {
     }
     
     // --- GESTIONE MODIFICA LIBRO ---
+    
+    /**
+     * @brief Gestisce l'azione di modifica di un libro presente nel catalogo
+     * 
+     * Il metodo recupera dall'elenco il libro selezionato, apre una finestra di dialogo
+     * con i campi preimpostati e ne permette la modifica
+     * Alla conferma aggiorna l'oggetto nel model ed aggiorna la visualizzazione
+     * 
+     * @param event Evento generato dal click del bottone
+     */
     @FXML
     private void handleModificaLibro(ActionEvent event) {
         Libro libro = tabellaLibri.getSelectionModel().getSelectedItem();
@@ -446,6 +457,16 @@ public class BibliotecaController implements Initializable {
     }
 
     // --- GESTIONE MODIFICA UTENTE ---
+    
+    /**
+     * @brief Gestisce l'azione di modifica di un utente presente nell'elenco
+     * 
+     * Il metodo recupera dall'elenco l'utente selezionato, apre una finestra di dialogo
+     * con i campi preimpostati e ne permette la modifica
+     * Alla conferma aggiorna l'oggetto nel model ed aggiorna la visualizzazione
+     * 
+     * @param event Evento generato dal click del bottone
+     */
     @FXML
     private void handleModificaUtente(ActionEvent event) {
         Utente utente = tabellaUtenti.getSelectionModel().getSelectedItem();
@@ -492,21 +513,27 @@ public class BibliotecaController implements Initializable {
     }
     
     // --- GESTIONE RIMOZIONE LIBRO ---
+    /**
+     * @brief Gestisce l'azione di cancellazione di un libro presente nell'elenco
+     * 
+     * Il metodo recupera dall'elenco il libro selezionato, apre una finestra di dialogo
+     * per confermare la scelta di cancellazione o meno
+     * Alla conferma l'oggetto viene rimosso dall'elenco e viene aggiornata la visualizzazione
+     * 
+     * @param event Evento generato dal click del bottone
+     */
     @FXML
     private void handleRimuoviLibro(ActionEvent event) {
         Libro libro = tabellaLibri.getSelectionModel().getSelectedItem();
         if (libro == null) return;
 
-        // Chiediamo conferma prima di cancellare
         if (!chiediConferma("Elimina Libro", "Sei sicuro di voler eliminare '" + libro.getTitolo() + "'?")) {
             return;
         }
 
         try {
-            // Chiamiamo il service (rimuove dall'archivio)
             catalogoService.rimuoviLibro(libro);
             
-            // Rimuoviamo dalla tabella grafica
             observableLibri.remove(libro);
             
             showAlert("Successo", "Libro eliminato dal catalogo.");
@@ -516,31 +543,43 @@ public class BibliotecaController implements Initializable {
     }
 
     // --- GESTIONE RIMOZIONE UTENTE ---
+    /**
+     * @brief Gestisce l'azione di cancellazione di un utente presente nell'elenco
+     * 
+     * Il metodo recupera dall'elenco l'utente selezionato, apre una finestra di dialogo
+     * per confermare la scelta di cancellazione o meno
+     * Alla conferma l'oggetto viene rimosso dall'elenco e viene aggiornata la visualizzazione
+     * 
+     * @param event Evento generato dal click del bottone
+     */
     @FXML
     private void handleRimuoviUtente(ActionEvent event) {
         Utente utente = tabellaUtenti.getSelectionModel().getSelectedItem();
         if (utente == null) return;
 
-        // Chiediamo conferma
         if (!chiediConferma("Elimina Utente", "Sei sicuro di voler eliminare " + utente.getCognome() + "?")) {
             return;
         }
 
         try {
-            // Il Service lancerà un'eccezione se l'utente ha prestiti attivi!
             utenteService.rimuoviUtente(utente);
-            
-            // Se il service non dà errore, rimuoviamo dalla grafica
+        
             observableUtenti.remove(utente);
             
             showAlert("Successo", "Utente eliminato correttamente.");
         } catch (Exception e) {
-            // Qui mostriamo l'errore del service (es. "Ha ancora libri in prestito")
             showAlert("Errore Rimozione", e.getMessage());
         }
     }
 
-    // Metodo di utilità per la finestra di conferma (Sì/No)
+    /**
+     * @brief Gestisce l'azione di conferma di cancellazione
+     * 
+     * Il metodo apre una finestra di conferma dell'operazione di cancellazione
+     * e permette all'utente di scegliere se confermare o meno l'operazione
+     * 
+     * @param event Evento generato dal click del bottone
+     */
     private boolean chiediConferma(String title, String messaggio) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);

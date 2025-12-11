@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 public class Libro implements Serializable{
     private String titolo; ///< Titolo del libro
-    private List<String> autori;///< Lista degli autori
+    private List<String> autori;///< Lista degli autori separati da virgola
     private int anno;///<Anno di pubblicazione
     private String isbn;///< Codice identificativo unico assegnato ad ogni libro pubblicato.
     private int copie;///< Numero di copie presenti in biblioteca
@@ -100,10 +100,49 @@ public class Libro implements Serializable{
     
     public void incrementaCopie(){copie+=1;}
     
+    /**
+     * @brief metodo setter per reimpostare il titolo di un libro
+     * 
+     * viene utilizzato quando c'è necessità di modificare un libro del catalogo
+     * 
+     * @param titolo 
+     */
     public void setTitolo(String titolo) { this.titolo = titolo; }
+    
+    /**
+     * @brief metodo setter per reimpostare la lista di autori di un libro
+     * 
+     * viene utilizzato quando c'è necessità di modificare un libro del catalogo
+     * 
+     * @param autori 
+     */
     public void setAutori(List<String> autori) { this.autori = autori; }
+    
+    /**
+     * @brief metodo setter per reimpostare l'anno di pubblicazione di un libro
+     * 
+     * viene utilizzato quando c'è necessità di modificare un libro del catalogo
+     * 
+     * @param anno 
+     */
     public void setAnno(int anno) { this.anno = anno; }
+    
+    /**
+     * @brief metodo setter per reimpostare il codice univoco di un libro
+     * 
+     * viene utilizzato quando c'è necessità di modificare un libro del catalogo
+     * 
+     * @param isbn 
+     */
     public void setIsbn(String isbn) { this.isbn = isbn; }
+    
+    /**
+     * @brief metodo setter per reimpostare il numero di copie disponibili di un libro
+     * 
+     * viene utilizzato quando c'è necessità di modificare un libro del catalogo
+     * 
+     * @param copie 
+     */
     public void setCopie(int copie) { this.copie = copie; }
     
 }

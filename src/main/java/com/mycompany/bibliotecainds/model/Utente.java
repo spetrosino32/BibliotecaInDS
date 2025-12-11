@@ -196,9 +196,40 @@ public class Utente implements Serializable{
 
     }
 
+    /**
+     * @brief metodo setter per reimpostare il nome di un utente
+     * 
+     * viene utilizzato quando c'è necessità di modificare un utente dell'elenco
+     * 
+     * @param nome 
+     */
     public void setNome(String nome) { this.nome = nome; }
+    
+    /**
+     * @brief metodo setter per reimpostare il cognome di un utente
+     * 
+     * viene utilizzato quando c'è necessità di modificare un utente dell'elenco
+     * 
+     * @param cognome 
+     */
     public void setCognome(String cognome) { this.cognome = cognome; }
+    
+     /**
+     * @brief metodo setter per reimpostare la matricola di un utente
+     * 
+     * viene utilizzato quando c'è necessità di modificare un utente dell'elenco
+     * 
+     * @param matricola 
+     */
     public void setMatricola(String matricola) { this.matricola = matricola; }
+    
+     /**
+     * @brief metodo setter per reimpostare la mail di un utente
+     * 
+     * viene utilizzato quando c'è necessità di modificare un utente dell'elenco
+     * 
+     * @param email 
+     */
     public void setEmail(String email) { this.email = email; }
 
     /**

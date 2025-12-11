@@ -54,7 +54,7 @@
                                     <TextField fx:id="txtIsbn" promptText="ISBN" />
                                     <TextField fx:id="txtCopie" promptText="Copie Disponibili" />
                                     <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAggiungiLibro" text="Aggiungi Libro" />
-                                    <Button fx:id="btnModificaLibro" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleModificaLibro" text="Modifica Selezionato" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                    <Button fx:id="btnModificaLibro" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleModificaLibro" text="Modifica Libro" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
                                     <Button fx:id="btnRimuoviLibro" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRimuoviLibro" text="Elimina Libro" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
                                  </children>
                               </VBox>

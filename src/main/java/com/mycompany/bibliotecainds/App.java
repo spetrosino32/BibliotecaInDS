@@ -42,6 +42,14 @@ public class App extends Application {
         stage.show();
     }
 
+/**
+ * 
+ * @brief Metodo eseguito automaticamente alla chiusura
+ * 
+ * Salva lo stato attuale dell'archivio su un file binario
+ * 
+ * @throws Exception 
+ */
     @Override
     public void stop() throws Exception {
         com.mycompany.bibliotecainds.data.Archivio.salva("archivio.dat");

@@ -52,17 +52,4 @@ public class Personale implements Serializable {
     
     public String getPassword(){return password;}
     
-    /**
-     * @brief Modello per la modifica del catalogo
-     * Questo modello rappresenta un'operazione che il personale può eseguire.
-     */
-    
-    public void modificaCatalogo(){}
-    
-    /**
-     * @brief Metodo per la gestione degli utenti
-     * Questo modello rappresenta un'operazione dedicata alla gestione degli utenti
-     */
-    
-    public void gestisciUtenti(){}
 }
