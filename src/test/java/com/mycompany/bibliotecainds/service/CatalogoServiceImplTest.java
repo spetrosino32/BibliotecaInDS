@@ -70,7 +70,7 @@ public class CatalogoServiceImplTest {
     @Test
     public void testCercaLibriPerTitolo() throws Exception {
         Libro libro1 = new Libro("Cent'anni di solitudine", Arrays.asList("Gabriel Garcia"), 1967, "we69ew", 5);
-        Libro libro2 = new Libro("Decameron", Arrays.asList("Boccaccio"), 1353, oi96cx, 3);
+        Libro libro2 = new Libro("Decameron", Arrays.asList("Boccaccio"), 1353, "oi86cx", 3);
         catalogoService.aggiungiLibro(libro1);
         catalogoService.aggiungiLibro(libro2);
 
