@@ -45,7 +45,7 @@ public class CatalogoServiceImplTest {
     @Test
     public void testAggiungiLibroDuplicato() throws Exception {
         Libro libro1 = new Libro("Guerra e pace", Arrays.asList("Tolstoj"), 1869, "ss88tt", 5);
-        Libro libro2 = new Libro("Orgoglio e pregiudizio", Arrays.asList("Jane Austen"), 1813, "iu23po", 3); // stesso ISBN
+        Libro libro2 = new Libro("Orgoglio e pregiudizio", Arrays.asList("Jane Austen"), 1813, "ss88tt", 3); // stesso ISBN
 
         assertDoesNotThrow(() -> catalogoService.aggiungiLibro(libro1));
         Exception exception = assertThrows(Exception.class, () -> catalogoService.aggiungiLibro(libro2));

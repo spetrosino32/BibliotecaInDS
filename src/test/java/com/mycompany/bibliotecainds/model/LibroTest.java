@@ -61,7 +61,7 @@ public class LibroTest {
      */
     @Test
     public void testGetIsbn() {
-        assertEquals("9777666123", libro.getIsbn());
+        assertEquals("fg52ou", libro.getIsbn());
     }
 
     /**
