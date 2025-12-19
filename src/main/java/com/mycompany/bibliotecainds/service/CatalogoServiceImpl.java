@@ -19,6 +19,7 @@ package com.mycompany.bibliotecainds.service;
 
 import com.mycompany.bibliotecainds.data.Archivio;
 import com.mycompany.bibliotecainds.model.Libro;
+import com.mycompany.bibliotecainds.model.Prestito;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,14 +44,26 @@ public class CatalogoServiceImpl implements CatalogoService {
     @Override
     public void aggiungiLibro(Libro nuovoLibro) throws Exception {
         List<Libro> catalogo = Archivio.getInstance().getCatalogoLibri();
-        
+    
         for (Libro l : catalogo) {
+        // Controllo ISBN Duplicato
             if (l.getIsbn().equalsIgnoreCase(nuovoLibro.getIsbn())) {
-                throw new Exception("Esiste già un libro con questo ISBN: " + nuovoLibro.getIsbn());
+                throw new Exception("Errore: Esiste già un libro con ISBN " + nuovoLibro.getIsbn());
             }
         }
+        
+        int annoCorrente = java.time.LocalDate.now().getYear();
+
+        if (nuovoLibro.getAnno() > annoCorrente) {
+            throw new Exception("Errore: L'anno di pubblicazione non può essere nel futuro.");
+        }
+        
+        if (nuovoLibro.getAnno() < 0) { // O altro limite sensato
+            throw new Exception("Errore: Anno di pubblicazione non valido.");
+        }
+    
         catalogo.add(nuovoLibro);
-    }
+}
     
     /**
      * @brief Rimuove un libro dal catalogo.
@@ -60,8 +73,19 @@ public class CatalogoServiceImpl implements CatalogoService {
      */
     @Override
     public void rimuoviLibro(Libro libro) throws Exception {
-        Archivio.getInstance().getCatalogoLibri().remove(libro);
+    // Recuperiamo la lista dei prestiti attivi
+    List<Prestito> prestiti = Archivio.getInstance().getPrestitiAttivi();
+    
+    // Controlliamo se QUESTO libro (tramite ISBN) è attualmente prestato a qualcuno
+    for (Prestito p : prestiti) {
+        if (p.getLibro().getIsbn().equals(libro.getIsbn())) {
+            throw new Exception("Impossibile eliminare: il libro è attualmente in prestito a " + p.getUtente().getCognome());
+        }
     }
+    
+    // Se nessuno lo ha in prestito, lo cancelliamo
+    Archivio.getInstance().getCatalogoLibri().remove(libro);
+}
     
     /**
      * @brief Cerca libri nel catalogo in base a una stringa.
@@ -101,5 +125,39 @@ public class CatalogoServiceImpl implements CatalogoService {
         List<Libro> libri = Archivio.getInstance().getCatalogoLibri();
         libri.sort((l1, l2) -> l1.getTitolo().compareToIgnoreCase(l2.getTitolo()));
         return libri;
+    }
+    
+    /**
+     * @brief Aggiorna i dati di un libro esistente con controllo sui duplicati.
+     * Aggiorna titolo, autori, anno, copie e ISBN. Verifica che il nuovo ISBN
+     * non vada in conflitto con altri libri già presenti nel catalogo.
+     * @param libroEsistente Il libro oggetto della modifica.
+     * @param nuovoTitolo Il nuovo titolo.
+     * @param nuoviAutori La nuova lista di autori.
+     * @param nuovoAnno Il nuovo anno di pubblicazione.
+     * @param nuovoIsbn Il nuovo codice ISBN.
+     * @param nuoveCopie Il nuovo numero di copie totali.
+     * @throws Exception Se il nuovo ISBN è già assegnato ad un altro libro.
+     */
+    @Override
+    public void aggiornaLibro(Libro libroEsistente, String nuovoTitolo, List<String> nuoviAutori, int nuovoAnno, String nuovoIsbn, int nuoveCopie) throws Exception {
+        List<Libro> catalogo = Archivio.getInstance().getCatalogoLibri();
+
+        for (Libro l : catalogo) {
+            // SALTA SE STESSO
+            if (l == libroEsistente) continue;
+
+            // Controlla conflitti con GLI ALTRI
+            if (l.getIsbn().equalsIgnoreCase(nuovoIsbn)) {
+                throw new Exception("Errore: ISBN già assegnato ad un altro libro.");
+            }
+        }
+
+        // APPLICO LE MODIFICHE
+        libroEsistente.setTitolo(nuovoTitolo);
+        libroEsistente.setAutori(nuoviAutori);
+        libroEsistente.setAnno(nuovoAnno);
+        libroEsistente.setIsbn(nuovoIsbn);
+        libroEsistente.setCopie(nuoveCopie);
     }
 }

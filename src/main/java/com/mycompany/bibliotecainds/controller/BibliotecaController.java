@@ -413,22 +413,18 @@ public class BibliotecaController implements Initializable {
         Libro libro = tabellaLibri.getSelectionModel().getSelectedItem();
         if (libro == null) return;
 
-        // Creiamo una finestra di dialogo custom
-        Dialog<Libro> dialog = new Dialog<>();
+        Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Modifica Libro");
-        dialog.setHeaderText("Modifica i dati del libro: " + libro.getTitolo());
+        dialog.setHeaderText("Modifica i dati del libro");
 
-        // Aggiungiamo i tasti OK e ANNULLA
-        ButtonType loginButtonType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+        ButtonType btnSalvaType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnSalvaType, ButtonType.CANCEL);
 
-        // Creiamo i campi pre-compilati con i dati attuali
         GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
+        grid.setHgap(10); grid.setVgap(10);
         
         TextField editTitolo = new TextField(libro.getTitolo());
-        TextField editAutori = new TextField(String.join(",", libro.getAutori())); // Uniamo la lista in stringa
+        TextField editAutori = new TextField(String.join(",", libro.getAutori()));
         TextField editIsbn = new TextField(libro.getIsbn());
         TextField editAnno = new TextField(String.valueOf(libro.getAnno()));
         TextField editCopie = new TextField(String.valueOf(libro.getCopieDisponibili()));
@@ -441,33 +437,41 @@ public class BibliotecaController implements Initializable {
 
         dialog.getDialogPane().setContent(grid);
 
-        // Convertiamo il risultato quando si preme Salva
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == loginButtonType) {
-                try {
-                    // Aggiorniamo l'oggetto LIBRO originale
-                    libro.setTitolo(editTitolo.getText());
-                    libro.setIsbn(editIsbn.getText());
-                    libro.setAnno(Integer.parseInt(editAnno.getText()));
-                    libro.setCopie(Integer.parseInt(editCopie.getText()));
-                    
-                    // Ricostruiamo la lista autori
-                    ArrayList<String> nuoviAutori = new ArrayList<>(Arrays.asList(editAutori.getText().split(",")));
-                    libro.setAutori(nuoviAutori);
-                    
-                    return libro;
-                } catch (Exception e) {
-                    showAlert("Errore", "Dati non validi: " + e.getMessage());
+        // --- PARTE IMPORTANTE: Gestione del click su SALVA ---
+        final Button btnSalva = (Button) dialog.getDialogPane().lookupButton(btnSalvaType);
+        
+        // Aggiungiamo un filtro all'evento: se c'è errore, IMPEDIAMO la chiusura della finestra
+        btnSalva.addEventFilter(ActionEvent.ACTION, ae -> {
+            try {
+                // Raccogliamo i dati dai campi
+                String titolo = editTitolo.getText();
+                String isbn = editIsbn.getText();
+                ArrayList<String> autori = new ArrayList<>(Arrays.asList(editAutori.getText().split(",")));
+                int anno = Integer.parseInt(editAnno.getText());
+                int copie = Integer.parseInt(editCopie.getText());
+
+                // Validazione ISBN Regex
+                if (!isbn.matches("^[a-zA-Z]{2}\\d{2}[a-zA-Z]{2}$")) {
+                    throw new Exception("Formato ISBN errato (Es. AA11BB).");
                 }
+
+                // CHIAMIAMO IL SERVICE (che farà il controllo duplicati)
+                catalogoService.aggiornaLibro(libro, titolo, autori, anno, isbn, copie);
+                
+                // Se arriva qui, è andato tutto bene: la finestra si chiuderà da sola
+                
+            } catch (NumberFormatException e) {
+                showAlert("Errore Formato", "Anno e Copie devono essere numeri.");
+                ae.consume(); // BLOCCA LA CHIUSURA DELLA FINESTRA
+            } catch (Exception e) {
+                showAlert("Errore", e.getMessage()); // Mostra "ISBN duplicato"
+                ae.consume(); // BLOCCA LA CHIUSURA DELLA FINESTRA
             }
-            return null;
         });
 
-        // Mostriamo la finestra e aspettiamo
-        dialog.showAndWait().ifPresent(l -> {
-            tabellaLibri.refresh(); // Aggiorna la grafica della tabella
-            showAlert("Successo", "Libro modificato correttamente.");
-        });
+        // Attendiamo la chiusura
+        dialog.showAndWait();
+        tabellaLibri.refresh(); // Aggiorniamo la tabella alla fine
     }
 
     // --- GESTIONE MODIFICA UTENTE ---
@@ -486,12 +490,12 @@ public class BibliotecaController implements Initializable {
         Utente utente = tabellaUtenti.getSelectionModel().getSelectedItem();
         if (utente == null) return;
 
-        Dialog<Utente> dialog = new Dialog<>();
+        Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Modifica Utente");
-        dialog.setHeaderText("Modifica i dati di: " + utente.getCognome());
+        dialog.setHeaderText("Modifica i dati utente");
 
-        ButtonType saveBtn = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
+        ButtonType btnSalvaType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnSalvaType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
@@ -508,22 +512,28 @@ public class BibliotecaController implements Initializable {
 
         dialog.getDialogPane().setContent(grid);
 
-        dialog.setResultConverter(btn -> {
-            if (btn == saveBtn) {
-                // Aggiorniamo l'oggetto UTENTE originale
-                utente.setNome(editNome.getText());
-                utente.setCognome(editCognome.getText());
-                utente.setMatricola(editMatricola.getText());
-                utente.setEmail(editEmail.getText());
-                return utente;
+        final Button btnSalva = (Button) dialog.getDialogPane().lookupButton(btnSalvaType);
+        
+        btnSalva.addEventFilter(ActionEvent.ACTION, ae -> {
+            try {
+                // CHIAMIAMO IL SERVICE
+                utenteService.aggiornaUtente(
+                        utente, 
+                        editNome.getText(), 
+                        editCognome.getText(), 
+                        editMatricola.getText(), 
+                        editEmail.getText()
+                );
+                // Tutto ok, la finestra si chiude
+                
+            } catch (Exception e) {
+                showAlert("Errore Modifica", e.getMessage()); // Es. "Matricola duplicata"
+                ae.consume(); // NON CHIUDERE LA FINESTRA
             }
-            return null;
         });
 
-        dialog.showAndWait().ifPresent(u -> {
-            tabellaUtenti.refresh();
-            showAlert("Successo", "Utente modificato correttamente.");
-        });
+        dialog.showAndWait();
+        tabellaUtenti.refresh();
     }
     
     // --- GESTIONE RIMOZIONE LIBRO ---

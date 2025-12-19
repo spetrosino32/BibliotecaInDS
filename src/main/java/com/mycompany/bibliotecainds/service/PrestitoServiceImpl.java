@@ -53,6 +53,19 @@ public class PrestitoServiceImpl implements PrestitoService {
             throw new Exception("Limite prestiti raggiunto per l'utente");
         }
 
+        for (Prestito p : utente.getListaPrestiti()) {
+        // Confrontiamo gli ISBN per essere sicuri
+            if (p.getLibro().getIsbn().equals(libro.getIsbn())) {
+                throw new Exception("L'utente ha già in prestito una copia di questo libro.");
+            }
+        }
+        
+        for (Prestito p : utente.getListaPrestiti()) {
+            if (p.isScaduto()) {
+                throw new Exception("L'utente ha prestiti scaduti non ancora restituiti. Impossibile procedere.");
+            }
+        }
+        
         Prestito p = new Prestito(libro, LocalDate.now(), utente);
         libro.decrementaCopie();
         utente.aggiungiPrestito(p);

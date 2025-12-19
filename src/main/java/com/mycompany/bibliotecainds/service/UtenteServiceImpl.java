@@ -43,14 +43,16 @@ public class UtenteServiceImpl implements UtenteService{
     
     @Override
     public void registraUtente(Utente nuovoUtente) throws Exception {
+        validaFormato(nuovoUtente.getMatricola(), nuovoUtente.getEmail());
+        
         List<Utente> utenti = Archivio.getInstance().getRegistroUtenti();
         
         for (Utente u : utenti) {
-            if (u.getMatricola() == nuovoUtente.getMatricola()) {
-                throw new Exception("Matricola già presente nel sistema.");
+            if (u.getMatricola().equalsIgnoreCase(nuovoUtente.getMatricola())) {
+                throw new Exception("Errore: Matricola già presente nel sistema.");
             }
             if (u.getEmail().equalsIgnoreCase(nuovoUtente.getEmail())) {
-                throw new Exception("Email già presente nel sistema.");
+                throw new Exception("Errore: Email già presente nel sistema.");
             }
         }
         
@@ -111,5 +113,62 @@ public class UtenteServiceImpl implements UtenteService{
             return res;
         });
         return utenti;
+    }
+    
+    /**
+     * @brief Aggiorna i dati di un utente esistente verificando eventuali conflitti.
+     * * Modifica i dati anagrafici dell'utente. Prima di applicare le modifiche,
+     * controlla che la nuova matricola o la nuova email non appartengano già 
+     * ad un altro utente nel sistema (escludendo l'utente che si sta modificando).
+     * 
+     * @param utenteEsistente L'oggetto Utente originale da modificare.
+     * @param nuovoNome Il nuovo nome da impostare.
+     * @param nuovoCognome Il nuovo cognome da impostare.
+     * @param nuovaMatricola La nuova matricola da verificare e impostare.
+     * @param nuovaEmail La nuova email da verificare e impostare.
+     * @throws Exception Se la nuova matricola o email sono già assegnate ad altri utenti.
+     */
+    @Override
+    public void aggiornaUtente(Utente utenteEsistente, String nuovoNome, String nuovoCognome, String nuovaMatricola, String nuovaEmail) throws Exception {
+        validaFormato(nuovaMatricola, nuovaEmail);
+
+        List<Utente> utenti = Archivio.getInstance().getRegistroUtenti();
+
+        for (Utente u : utenti) {
+            if (u == utenteEsistente) continue;
+
+            if (u.getMatricola().equalsIgnoreCase(nuovaMatricola)) {
+                throw new Exception("Errore: Matricola già assegnata ad un altro utente.");
+            }
+            if (u.getEmail().equalsIgnoreCase(nuovaEmail)) {
+                throw new Exception("Errore: Email già assegnata ad un altro utente.");
+            }
+        }
+
+        utenteEsistente.setNome(nuovoNome);
+        utenteEsistente.setCognome(nuovoCognome);
+        utenteEsistente.setMatricola(nuovaMatricola);
+        utenteEsistente.setEmail(nuovaEmail);
+    }
+    
+    
+    /**
+     * @brief Verifica la correttezza formale di matricola ed email.
+     * Questo metodo di supporto controlla che:
+     * - L'email contenga il carattere '@'.
+     * - La matricola sia composta esclusivamente da caratteri numerici (tramite Regex).
+     * 
+     * @param matricola La stringa della matricola da validare.
+     * @param email L'indirizzo email da validare.
+     * @throws Exception Se la matricola contiene caratteri non numerici o l'email non contiene '@'.
+     */
+    private void validaFormato(String matricola, String email) throws Exception {
+        if (email == null || !email.contains("@")) {
+            throw new Exception("Formato Email non valido: deve contenere il carattere '@'.");
+        }
+    
+        if (matricola == null || !matricola.matches("\\d+")) {
+            throw new Exception("Formato Matricola non valido: inserire solo numeri.");
+        }
     }
 }

@@ -58,4 +58,18 @@ public interface UtenteService {
      * @return Lista completa degli utenti presenti nel sistema.
      */
     public List<Utente> getListaUtenti();
+    
+    /**
+     * @brief Aggiorna i dati di un utente esistente verificando eventuali conflitti.
+     * * Modifica i dati anagrafici dell'utente. Prima di applicare le modifiche,
+     * controlla che la nuova matricola o la nuova email non appartengano già 
+     * ad un altro utente nel sistema (escludendo l'utente che si sta modificando).
+     * @param utenteEsistente L'oggetto Utente originale da modificare.
+     * @param nuovoNome Il nuovo nome da impostare.
+     * @param nuovoCognome Il nuovo cognome da impostare.
+     * @param nuovaMatricola La nuova matricola da verificare e impostare.
+     * @param nuovaEmail La nuova email da verificare e impostare.
+     * @throws Exception Se la nuova matricola o email sono già assegnate ad altri utenti.
+     */
+    public void aggiornaUtente(Utente utenteEsistente, String nuovoNome, String nuovoCognome, String nuovaMatricola, String nuovaEmail) throws Exception;
 }

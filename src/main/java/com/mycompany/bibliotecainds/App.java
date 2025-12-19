@@ -37,8 +37,9 @@ public class App extends Application {
 
         com.mycompany.bibliotecainds.data.Archivio.carica("archivio.dat");
 
-        scene = new Scene(loadFXML("login"), 640, 480); 
+        scene = new Scene(loadFXML("login")); 
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 
@@ -83,5 +84,4 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }

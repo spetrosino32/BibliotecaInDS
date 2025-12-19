@@ -49,7 +49,7 @@ public class CatalogoServiceImplTest {
 
         assertDoesNotThrow(() -> catalogoService.aggiungiLibro(libro1));
         Exception exception = assertThrows(Exception.class, () -> catalogoService.aggiungiLibro(libro2));
-        assertTrue(exception.getMessage().contains("Esiste già un libro con questo ISBN"));
+        assertTrue(exception.getMessage().contains("ISBN"));
     }
 
     /**
@@ -101,8 +101,8 @@ public class CatalogoServiceImplTest {
         catalogoService.aggiungiLibro(libro1);
         catalogoService.aggiungiLibro(libro2);
 
-        List<Libro> catalogo = catalogoService.getCatalogo();
-        assertEquals("Cime tempestose", catalogo.get(0).getTitolo()); // ordinamento alfabetico
-        assertEquals("Il gattopardo", catalogo.get(1).getTitolo());
+        List<Libro> getCatalogo = catalogoService.getCatalogo();
+        assertEquals("Cime tempestose", getCatalogo.get(0).getTitolo()); // ordinamento alfabetico
+        assertEquals("Il gattopardo", getCatalogo.get(1).getTitolo());
     }
 }
